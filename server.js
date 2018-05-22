@@ -1,11 +1,17 @@
+// print out node version
 console.log('Node version: ' + process.version);
 
+// read port from environment variable else use 3000 as default
+const port = process.env.PORT || 3000;
+
+// all imports
 const express = require('express')
 const app = express()
 const fs = require("fs");
 const path = require("path");
 
-app.get('/', (req, res) => res.send('Hello World!'))
+// health check handler
+app.get('/', (req, res) => res.send('I am alive!'))
 
 app.get('/video',(req, res) => {
     const videoFile = path.resolve(__dirname,"sample-video.mp4");
@@ -55,4 +61,4 @@ app.get('/video',(req, res) => {
 
 });
 
-app.listen(3000, () => console.log('Example app listening on port 3000!'))
+app.listen(port, () => console.log('Example app listening on port :',port))
