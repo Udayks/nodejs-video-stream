@@ -30,12 +30,14 @@ app.get('/video',(req, res) => {
      return res.sendStatus(416);
     }
 
+    // compute requested range
     var positions = range.replace("/bytes=/", "").split("-");
     var start = parseInt(positions[0], 10);
     var total = fileSize;
     var end = positions[1] ? parseInt(positions[1], 10) : total - 1;
     var chunksize = (end - start) + 1;
 
+    //set respomse headers
     res.writeHead(206, {
         "Content-Range": "bytes " + start + "-" + end + "/" + total,
         "Accept-Ranges": "bytes",
@@ -43,6 +45,7 @@ app.get('/video',(req, res) => {
         "Content-Type": "video/mp4"
       });
 
+      // write video content to response
       let stream = fs.createReadStream(videoFile, { start: start, end: end })
         .on("open", function() {
           stream.pipe(res);
