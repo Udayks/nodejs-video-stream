@@ -9,6 +9,7 @@ app.get('/', (req, res) => res.send('Hello World!'))
 
 app.get('/video',(req, res) => {
     const videoFile = path.resolve(__dirname,"sample-video.mp4");
+    let fileSize;
 
     //check if file exists if not return error
     fs.stat(videoFile, function(err, stats) {
@@ -19,6 +20,7 @@ app.get('/video',(req, res) => {
           }
         res.end(err);
         }
+        fileSize = stats.size;
     });
 
     var range = req.headers.range;
@@ -30,7 +32,7 @@ app.get('/video',(req, res) => {
 
     var positions = range.replace("/bytes=/", "").split("-");
     var start = parseInt(positions[0], 10);
-    var total = stats.size;
+    var total = fileSize;
     var end = positions[1] ? parseInt(positions[1], 10) : total - 1;
     var chunksize = (end - start) + 1;
 
@@ -41,7 +43,7 @@ app.get('/video',(req, res) => {
         "Content-Type": "video/mp4"
       });
 
-      let stream = fs.createReadStream(file, { start: start, end: end })
+      let stream = fs.createReadStream(videoFile, { start: start, end: end })
         .on("open", function() {
           stream.pipe(res);
         }).on("error", function(err) {
