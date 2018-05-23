@@ -1,7 +1,9 @@
 // print out node version
 console.log('Node version: ' + process.version);
 
-// read port from environment variable else use 3000 as default
+let visitedUsers = []
+
+// read port from environment variable(for heroku since heroku sets its port in PORT environment variable) else use 3000 as default
 const port = process.env.PORT || 3000;
 
 // all imports
@@ -14,6 +16,20 @@ const path = require("path");
 app.get('/', (req, res) => res.send('I am alive!'))
 
 app.get('/video',(req, res) => {
+
+    // x-forwarded-for header is to be used if the request is coming from a proxy such as nginx
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+    // if user has already visited return 
+    if (visitedUsers.indexOf(ip) > -1) {
+        res.send('You have already watched the video')
+        return 
+    } else{
+        visitedUsers.push(ip)
+        console.log("adding current users ip to visited user list")
+    }
+
+    // read file from current directory
     const videoFile = path.resolve(__dirname,"sample-video.mp4");
     let fileSize;
 
@@ -61,4 +77,5 @@ app.get('/video',(req, res) => {
 
 });
 
+//start listening for requests on given port
 app.listen(port, () => console.log('Example app listening on port :',port))
