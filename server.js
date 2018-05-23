@@ -53,13 +53,20 @@ app.get('/video',(req, res) => {
     }
 
     // compute requested range
-    var positions = range.replace("/bytes=/", "").split("-");
+    var positions = range.replace("bytes=", "").split("-");
     var start = parseInt(positions[0], 10);
     var total = fileSize;
     var end = positions[1] ? parseInt(positions[1], 10) : total - 1;
     var chunksize = (end - start) + 1;
 
-    //set respomse headers
+    console.log("positions",positions)
+    console.log("start",start)
+    console.log("total",total)
+    console.log("end",end)
+    console.log("chunksize",chunksize)
+
+
+    //set response headers
     res.writeHead(206, {
         "Content-Range": "bytes " + start + "-" + end + "/" + total,
         "Accept-Ranges": "bytes",
