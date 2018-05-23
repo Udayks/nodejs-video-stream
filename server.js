@@ -31,7 +31,6 @@ app.get('/video',(req, res) => {
 
     // read file from current directory
     const videoFile = path.resolve(__dirname,"sample-video.mp4");
-    let fileSize;
 
     //check if file exists if not return error
     fs.stat(videoFile, function(err, stats) {
@@ -42,10 +41,13 @@ app.get('/video',(req, res) => {
           }
         res.end(err);
         }
-        fileSize = stats.size;
     });
 
-    var range = req.headers.range;
+    //compute video size
+    let stats = fs.statSync(videoFile)
+    let fileSize = stats["size"]
+
+    const range = req.headers.range;
     // if range header does not exist then return error
     if (!range) {
      // 416 Wrong range
