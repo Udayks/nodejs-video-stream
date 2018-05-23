@@ -26,7 +26,7 @@ app.get('/video',(req, res) => {
         return 
     } else{
         visitedUsers.push(ip)
-        console.log("adding current users ip to visited user list")
+        console.log("adding current user to visited user list IP: ",ip)
     }
 
     // read file from current directory
@@ -66,6 +66,8 @@ app.get('/video',(req, res) => {
         "Content-Length": chunksize,
         "Content-Type": "video/mp4"
       });
+
+      console.log("writing content to response")
 
       // write video content to response
       let stream = fs.createReadStream(videoFile, { start: start, end: end })
